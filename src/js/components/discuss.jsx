@@ -9,6 +9,7 @@ class Discuss extends Component {
   constructor(props){
     super(props);
     this.nextTopic = this.nextTopic.bind(this);
+    this.previousTopic = this.previousTopic.bind(this);
   }
   componentDidMount(){
     if(!this.props.currentTopic){
@@ -22,6 +23,15 @@ class Discuss extends Component {
       return;
     }
     return this.props.dispatch(setCurrentTopic(this.props.topics[currentTopicIndex + 1]));
+  }
+
+  previousTopic(e) {
+    e.preventDefault();
+    const currentTopicIndex = this.props.topics.indexOf(this.props.currentTopic);
+    if(currentTopicIndex === this.props.topics.length - 1){
+      return;
+    }
+    return this.props.dispatch(setCurrentTopic(this.props.topics[currentTopicIndex - 1]));
   }
   render(){
     const mapTopics = (topic) => {
@@ -42,6 +52,7 @@ class Discuss extends Component {
           {_.get(this.props.currentTopic, 'title')}
         </div>
         <div className='current-actions'>
+          <a href='' title='Previous Topic' className='up-arrow fa fa-arrow-up' onClick={this.previousTopic}></a>
           <a href='' title='Next Topic' className='fa fa-arrow-down' onClick={this.nextTopic}></a>
         </div>
       </div>);

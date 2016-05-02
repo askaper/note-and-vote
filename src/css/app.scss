@@ -428,6 +428,11 @@ input.bubble-text:focus {
 
 .current-actions {
   color: $tertiary-color;
+  display: block;
+}
+
+.upp-arrow {
+  margin-right: 10px;
 }
 
 .how, .when {
