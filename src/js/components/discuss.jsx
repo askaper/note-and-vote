@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Topic from './topic';
 import BrightBox from './brightBox';
-import {setCurrentTopic} from '../actions';
+import {nextTopic} from '../actions';
+import {dispatch} from '../services/socket';
 import _ from 'lodash';
 
 class Discuss extends Component {
@@ -11,18 +12,9 @@ class Discuss extends Component {
     this.nextTopic = this.nextTopic.bind(this);
     this.previousTopic = this.previousTopic.bind(this);
   }
-  componentDidMount(){
-    if(!this.props.currentTopic){
-      this.props.dispatch(setCurrentTopic(this.props.topics[0]));
-    }
-  }
   nextTopic(e){
     e.preventDefault();
-    const currentTopicIndex = this.props.topics.indexOf(this.props.currentTopic);
-    if(currentTopicIndex === this.props.topics.length - 1){
-      return;
-    }
-    return this.props.dispatch(setCurrentTopic(this.props.topics[currentTopicIndex + 1]));
+    return dispatch(nextTopic());
   }
 
   previousTopic(e) {
@@ -35,12 +27,9 @@ class Discuss extends Component {
   }
   render(){
     const mapTopics = (topic) => {
-      // const showNext = topic.current ? (<div className='next'><a href='#' onClick={this.nextTopic}>Next</a><i className='fa fa-arrow-down' /></div>) : undefined;
-      const showNext = undefined;
       return (
-        <Topic topic={topic} showVotes={true} key={topic.title}>
-          {showNext}
-        </Topic>);
+        <Topic topic={topic} showVotes={true} key={topic.title} />
+      );
     };
     const title = (
       <div className='discuss-title'>

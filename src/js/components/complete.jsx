@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
-import {changePhase} from '../actions';
+import {changePhase, deleteMeeting} from '../actions';
 import {connect} from 'react-redux';
+import BrightBox from './brightBox';
+import BrightButton from './brightButton';
+import {dispatch} from '../services/socket';
 
 class Complete extends Component {
   constructor(props){
@@ -9,18 +12,28 @@ class Complete extends Component {
   }
   goBack(e){
     e.preventDefault();
-    return this.props.dispatch(changePhase('discuss'));
+    return dispatch(changePhase('discuss'));
+  }
+  deleteMeeting(){
+    return dispatch(deleteMeeting());
   }
   render(){
+    const title = (<h2>The End</h2>);
     return (
-      <div className='complete'>
-        <div className='description'>
+      <BrightBox type='primary' title={title} className='phase'>
+        <div className='the-end'>
           This meeting is now over. There is nothing left to see here. Move along.
         </div>
-        <div className='oops'>
-          'Didn\'t mean to end the meeting?' <a href='#' onClick={this.goBack}>Go Back</a>
+        <div className='complete-actions'>
+          <BrightButton type='secondary' icon='fa-angle-left' onClick={this.goBack}>
+            Back
+          </BrightButton>
+          <BrightButton type='tertiary' icon='fa-trash' onClick={this.deleteMeeting}>
+            Delete Meeting
+          </BrightButton>
         </div>
-      </div>);
+      </BrightBox>
+    );
   }
 }
 

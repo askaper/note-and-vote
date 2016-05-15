@@ -15,7 +15,7 @@ const postTopic = (topic, userName) => {
 
 const changePhase = (nextPhase = 'submit') => {
   return {
-    type: 'CHANGE_PHASE',
+    type: `SET_PHASE_${nextPhase.toUpperCase()}`,
     phase: nextPhase
   };
 };
@@ -27,34 +27,163 @@ const removeTopic = topicId => {
   };
 };
 
-const upVote = (topic, user) => {
+const upVote = (topic, userId) => {
   return {
     type: 'UP_VOTE',
     topic,
-    user
+    userId
   };
 };
 
-const downVote = (topic, user) => {
+const downVote = (topic, userId) => {
   return {
     type: 'DOWN_VOTE',
     topic,
-    user
+    userId
   };
 };
 
-const setCurrentTopic = (topic) => {
+const nextTopic = () => {
   return {
-    type: 'SET_CURRENT_TOPIC',
-    topic
+    type: 'NEXT_TOPIC'
   };
 };
 
-const setHost = (isHost) => {
+const setHost = (participantId, isHost) => {
   return {
     type: 'SET_HOST',
-    isHost
+    isHost,
+    id: participantId
   };
 };
 
-export {createMeeting, postTopic, changePhase, removeTopic, upVote, downVote, setCurrentTopic, setHost};
+const setLocked = locked => {
+  return {
+    type: 'SET_LOCKED',
+    locked
+  };
+};
+
+const setNewHosts = newHosts => {
+  return {
+    type: 'SET_NEW_HOSTS',
+    newHosts
+  };
+};
+
+const joinMeeting = (meeting) => {
+  const action = {
+    type: 'JOIN_MEETING'
+  };
+  return Object.assign({}, action, meeting);
+};
+
+const addParticipant = participant => {
+  return {
+    type: 'ADD_PARTICIPANT',
+    participant
+  };
+};
+
+const removeParticipant = participantId => {
+  return {
+    type: 'REMOVE_PARTICIPANT',
+    participantId
+  };
+};
+
+const deleteMeeting = (meetingName) => {
+  return {
+    type: 'DELETE_MEETING',
+    name: meetingName
+  };
+};
+
+const shrinkMeeting = (meetingName) => {
+  return {
+    type: 'SHRINK_MEETING',
+    name: meetingName
+  };
+};
+
+const growMeeting = meetingName => {
+  return {
+    type: 'GROW_MEETING',
+    name: meetingName
+  };
+};
+
+const lockedOut = (isLockedOut) => {
+  return {
+    type: 'LOCKED_OUT',
+    lockedOut: isLockedOut
+  };
+};
+
+const addKnocker = (id, message) => {
+  return {
+    type: 'ADD_KNOCKER',
+    id,
+    message
+  };
+};
+
+const approveKnocker = id => {
+  return {
+    type: 'APPROVE_KNOCKER',
+    id
+  };
+};
+
+const rejectKnocker = id => {
+  return {
+    type: 'REJECT_KNOCKER',
+    id
+  };
+};
+
+const allowKnocking = () => {
+  return {
+    type: 'ALLOW_KNOCKING'
+  };
+};
+
+const disableKnocking = () => {
+  return {
+    type: 'DISABLE_KNOCKING'
+  };
+};
+
+const setRoomName = roomName => {
+  return {
+    type: 'SET_ROOM_NAME',
+    roomName
+  };
+};
+
+export {
+  allowKnocking,
+  disableKnocking,
+  approveKnocker,
+  rejectKnocker,
+  addKnocker,
+  createMeeting,
+  postTopic,
+  changePhase,
+  removeTopic,
+  upVote,
+  downVote,
+  nextTopic,
+  setHost,
+  setLocked,
+  setNewHosts,
+  joinMeeting,
+  addParticipant,
+  removeParticipant,
+  deleteMeeting,
+  shrinkMeeting,
+  growMeeting,
+  lockedOut,
+  approveKnocker,
+  setRoomName
+};

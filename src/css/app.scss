@@ -55,7 +55,8 @@ $primary-transparent: rgba(58, 72, 204, 0);
 $primary-half-transparent: rgba(58, 72, 204, 0.5);
 $light-primary: rgb(130, 139, 228);
 $off-white-primary: rgb(160, 169, 255);
-$light-secondary-color: rgba(170, 124, 227, 0.45);
+$light-secondary-color: rgb(170, 124, 227);
+$light-secondary-tint: rgba(170, 124, 227, 0.45);
 $secondary-color: rgb(94, 15, 193);
 $secondary-transparent: rgba(94, 15, 193, 0);
 $off-white-secondary: rgb(230, 184, 255);
@@ -83,13 +84,12 @@ body a {
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  min-height: 600px;
-  padding-bottom: 30px;
+  height: 100vh;
   overflow: hidden;
   background:
     linear-gradient(
-      $light-secondary-color,
-      $light-secondary-color
+      $light-secondary-tint,
+      $light-secondary-tint
     ),
     url('/img/city-scape.jpg');
   background-size: cover;
@@ -122,7 +122,7 @@ body a {
   justify-content: space-around;
   align-items: center;
   width: 100%;
-  background: linear-gradient(180deg, $light-secondary-color 1%, $primary-color), $primary-color;;
+  background: linear-gradient(180deg, $light-secondary-tint 1%, $primary-color), $primary-color;;
   color: $light-primary;
   height: $box-size;
 }
@@ -149,7 +149,7 @@ input.bubble-text, .bubble-text {
   transition: all 0.1s ease-in-out;
 }
 
-input.bubble-text:focus {
+input.bubble-text:focus, input.knock-text:focus, button.knock-button:focus {
   outline-style: none;
 }
 
@@ -183,8 +183,23 @@ input.bubble-text:focus {
 .logo {
   font-size: 5rem;
   color: $off-white-primary;
+  position: relative;
 }
 
+.vote-logo {
+  position: absolute;
+  left: 36%;
+  top: 27%;
+  color: $tertiary-color;
+  // text-shadow: 1px 1px 6px $tertiary-color;
+  font-size: 4.5rem;
+}
+
+
+.active {
+  color: $off-white-primary;
+  font-weight: bold;
+}
 
 .meeting-list {
   display: flex;
@@ -289,6 +304,53 @@ input.bubble-text:focus {
   transition: all 0.1s ease-in-out;
 }
 
+.complete-actions {
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  min-height: 200px;
+};
+
+.complete-actions > * {
+  flex: 1;
+  max-width: 30%;
+}
+
+.locked {
+  text-align: center;
+  min-height: 50vh;
+}
+
+.locked .bright-box-content {
+  margin-top: 10px;
+}
+
+.go-back {
+  background-color: $primary-color;
+  border-radius: 20px;
+  box-shadow: 2px 2px 1 $off-white-primary;
+  color: white;
+  font-size: 4rem;
+}
+
+.go-back > * + * {
+  margin-left: 5px;
+}
+
+.oops {
+  color: $tertiary-color;
+  font-size: 1.3rem;
+}
+
+.oops:hover {
+  color: $light-tertiary;
+}
+
+.oops > * + * {
+  margin-left: 5px;
+}
+
 .next {
   color: $tertiary-color;
   font-size: 2rem;
@@ -313,14 +375,106 @@ input.bubble-text:focus {
   margin-top: 15px;
 }
 
-.return {
+.user.participant {
+  display: flex;
+  flex-direction: column;;
+  align-items: center;
+  color: $secondary-color;
+}
+
+.user.participant > div:first-child {
+  color: $light-secondary-color;
+  font-variant: small-caps;
+  font-weight: bold;
+  text-align: center;
+}
+
+input.knock-text {
+  border-radius: 0;
+  border: 0;
+  background-color: inherit;
+  box-shadow: 0;
+  flex: 1;
+  font-size: 1.5rem;
+  color: $primary-color;
+}
+.knock-button {
+  border: 0;
+  background-color: inherit;
+  color: $tertiary-color;
+  cursor: pointer;
+  border-radius: 0 $box-radius $box-radius 0;
+}
+
+.knock-form {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.knock-actions {
+  margin-top: 5px;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+}
+
+.knockers {
+  animation-name: bounce;
+  animation-duration: 2s;
+}
+
+.knockers .bright-box-content > * , .knocker {
+  display: flex;
+  flex-direction: column;
+}
+
+.knock-actions > * {
+  flex: 1 1 100%;
+}
+
+.knock-message {
+  text-align: center;
+}
+
+.disabled {
+  font-weight: bold;
+  color: $tertiary-color;
+}
+
+.button {
+  display: flex;
+  flex-direction: row;
   border-radius: $box-radius;
+  padding: 10px 0 10px 0;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.button > * + * {
+  margin-left: 5px;
+}
+
+.button:hover {
+  opacity: 0.9;
+}
+
+.button.secondary {
   background-color: $secondary-color;
   color: $off-white-secondary;
-  padding: 10px 0 10px 0;
+}
+
+.button.primary {
+  background-color: $primary-color;
+  color: $off-white-primary;
+}
+
+.button.tertiary {
+  background-color: $tertiary-color;
+  color: $off-white-tertiary;
 }
 
 .side-header {
@@ -635,9 +789,31 @@ input.toggle:checked + label:after {
 .bright-box-bubble {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .bright-box-bubble.primary {
   background-image: linear-gradient( 180deg, $primary-color, $primary-color 50%, white 50%, white);
+}
+
+.new:after {
+  content: 'new';
+  color: $tertiary-color;
+  vertical-align: super;
+  font-size: 0.6rem;
+  font-weight: bold;
+  font-variant: small-caps;
+  z-index: 5;
+}
+
+
+
+//Animations
+@keyframes bounce {
+    0%   {transform: translate(2px, 0)}
+    20%  {transform: translate(-4px, 0)}
+    40%  {transform: translate(4px, 0)}
+    60%  {transform: translate(-4px, 0)}
+    80%  {transform: translate(4px, 0)}
+    100% {transform: translate(-2px, 0)}
 }

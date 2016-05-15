@@ -1,16 +1,18 @@
 var concat = require('gulp-concat');
-var connect = require('connect');
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var sass = require('gulp-sass');
 var webpack = require('gulp-webpack');
 var express = require('express');
+const babel = require('gulp-babel');
 
 var cssDestination = 'assets/css';
 var imgDestination = 'assets/img';
 var jsDestination = 'assets/js';
 var fontDestination = 'assets/fonts';
+const serverDestination = 'dist/server';
+const sharedDestination = 'dist/src';
 
 // Serve up app.
 gulp.task('serve', function() {
@@ -27,19 +29,22 @@ gulp.task('serve', function() {
   });
 });
 
-// Wipe out the JavaScript, Stylesheet and Web Font destinations.
-gulp.task('clean', function(cb) {
-  del([
-    jsDestination + '/**/*',
-    cssDestination + '/**/*',
-    imgDestination + '/**/*',
-    fontDestination + '/**/*'
-  ]).then(function (/*paths*/) {
-    cb();
-  });
+gulp.task('compile-shared', ['clean-shared'], () => {
+  return gulp.src('src/js/**/*').pipe(babel()).pipe(gulp.dest('dist/src/js'));
 });
 
-var tasks = ['clean', 'css', 'img', 'js', 'wpreact', 'fonts'];
+gulp.task('compile-server', ['clean-server'], () => {
+  return gulp.src('server/**/*.js').pipe(babel()).pipe(gulp.dest('dist/server'));
+});
+
+gulp.task('clean-css', () => del(`${cssDestination}/**/*`));
+gulp.task('clean-js', () => del(`${jsDestination}/**/*`));
+gulp.task('clean-img', () => del(`${imgDestination}/**/*`));
+gulp.task('clean-fonts', () => del(`${fontDestination}/**/*`));
+gulp.task('clean-server', () => del(`${serverDestination}/**/*`));
+gulp.task('clean-shared', () => del(`${sharedDestination}/**/*`));
+
+var tasks = ['css', 'img', 'wpreact', 'fonts', 'compile-shared', 'compile-server'];
 
 // Watch and rebuild JavaScript and Stylesheets.
 gulp.task('dist', tasks);
@@ -48,11 +53,12 @@ gulp.task('default', tasks.concat('serve'), function() {
   console.log('Watching development files...'); // eslint-disable-line no-console
   gulp.watch(['src/css/**/*'], ['css']);
   gulp.watch(['src/img/**/*'], ['img']);
-  gulp.watch(['src/js/**/*'], ['wpreact']);
+  gulp.watch(['src/js/**/*'], ['wpreact', 'compile-shared']);
+  gulp.watch(['server/**/*'], ['compile-server']);
 });
 
 // Build Stylesheets.
-gulp.task('css', function() {
+gulp.task('css', ['clean-css'], function() {
   return gulp.src([
     'node_modules/font-awesome/css/font-awesome.min.css',
     'src/css/app.scss'
@@ -69,7 +75,7 @@ gulp.task('css', function() {
 });
 
 // Copy images
-gulp.task('img', function() {
+gulp.task('img', ['clean-img'], function() {
   return gulp.src([
     'src/img/**'
   ])
@@ -77,32 +83,13 @@ gulp.task('img', function() {
 });
 
 // Build fonts.
-gulp.task('fonts', function() {
+gulp.task('fonts', ['clean-fonts'], function() {
   return gulp.src('node_modules/font-awesome/fonts/*')
     .pipe(gulp.dest(fontDestination));
 });
 
-
-// Build JavaScript files.
-gulp.task('js', function() {
-  return gulp.src([
-    'node_modules/uikit/dist/js/uikit.min.js',
-    'node_modules/uikit/dist/js/components/tooltip.min.js',
-    'node_modules/lodash/lodash.js'
-  ])
-  .pipe(concat('all.js'))
-  .pipe(gulp.dest(jsDestination));
-});
-
-// // Build Webpack files.
-// gulp.task('wp', function() {
-//   return gulp.src([])
-//     .pipe(webpack( require('./webpack.config.js') ))
-//     .pipe(gulp.dest(jsDestination));
-// });
-
 // Build Webpack React files.
-gulp.task('wpreact', ['css'], function() {
+gulp.task('wpreact', ['css', 'clean-js'], function() {
   return gulp.src([])
     .pipe(webpack( require('./webpack.react.js') ))
     .pipe(gulp.dest(jsDestination));
